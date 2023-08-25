@@ -27,6 +27,7 @@ is.numeric(nombres)
 is.numeric(car.econ)
 
 #Traten de repetir con las funciones de character y logical
+#Borren el # y repitan el proceso con los 3 objetos como se hace en las líneas 25-27
 
 #is.character
 
