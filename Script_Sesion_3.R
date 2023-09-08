@@ -155,8 +155,6 @@ geih <- left_join(geih,Ocup, by= c("ID"))
 
 #Separamos el set de datos correspondiente a Santander
 
-antioquia <- subset(geih, DPTO == 05)
-rm(antioquia)
 santander <- subset(geih, DPTO == 68)
 head(santander)
 
@@ -227,31 +225,24 @@ summary(santander)
              #'P6410','P6420S2','P6430','P6800','P6850','P7045','P7180',
              #'P7170S1','INGLABO','OFICIO1_C8','RAMA4D_D_R4','P7250','P7280',
              #'P1806','P7440S1','P7450','P7350','P9460'))
+
 #Para este ejemplo utilizaremos estas variables
-
-santander_data <- select(santander, 
-                   c('ID','MES','PT','OCI','DSI','P3271','P6040','P6080','P6090',
-                     'P6070','P6160', 'P6170','P3041','P3042','P3042S1','P3043',
-                     'P3038','P3039','P6800','P6850','P7045','INGLABO',
-                     'OFICIO1_C8','RAMA4D_D_R4','P7250','P7280','P1806',
-                     'P7440S1','P7450','P7350','P9460'))
-
 #Empecemos por arreglar las variables, empezando por nombres y tipo de datos
 
-datos <-  select(santander_data, c('MES', 'P6040', 'P3271', 'P6080', 'P6070',
+datostaller <-  select(santander, c('MES', 'P6040', 'P3271', 'P6080', 'P6070',
                                  'P6090', 'P3043', 'P6800','INGLABO', 
-                                 'RAMA4D_D_R4'))
+                                 'RAMA4D_R4'))
 colnames(datos) <- c('Mes', 'Edad', 'Sexo', 'Grupo etnico', 'Estado Civil',
                      'EPS', 'Educacion','Trabajo semanal', 'Ingreso mensual', 
                      'CIUU 4rev')
 
 #Mirar el encabezado de los datos, para ver cómo quedan las columnas
-head(datos)
+names(datostaller)
 
 #Y ahora sí, descriptivas, una primera revisión puede hacerse usando la
 #función summary, que me devuelve algunas medidas posicionales
 
-summary(datos)
+summary(datostaller)
 
 #Punto importante, no todos los datos son continuos (¿qué significa eso?)
 #Variable continua = se puede medir
@@ -263,9 +254,9 @@ summary(datos)
 #La función mutate nos permite transformar variables en el dataframe, así
 #como anidar varias operaciones a la vez
 
-datos <-  datos %>% mutate(Sexo = case_when(Sexo == 1 ~ 'Hombre', 
-                                            Sexo == 2 ~ 'Mujer'),
-                         Sexo = factor(Sexo, levels = c('Hombre', 'Mujer')))
+datostaller <-  datostaller %>% mutate(Sexo = case_when(Sexo == 1 ~ 'Hombre', 
+                                                        Sexo == 2 ~ 'Mujer'),
+                                       Sexo = factor(Sexo, levels = c('Hombre', 'Mujer')))
 
 #Veamos como cambia el resultado al aplicar summary
 
@@ -274,12 +265,28 @@ summary(datos$Sexo) #Nos da sus frecuencias absolutas
 #Ejercicio rápido, la variable EPS nos dice si la persona está afiliada o no.
 #Cuál sería la forma en la que recodificaríamos la variable?
 
-datos <-  datos %>% mutate(EPS = case_when(EPS == 1 ~ 'Afiliado', 
+datos <-  datos %>% 
+                    mutate(EPS = case_when(EPS == 1 ~ 'Afiliado', 
                                            EPS == 2 ~ 'No afiliado'),
                            EPS = factor(EPS, levels = c('Afiliado', 
                                                         'No afiliado')))
 
 #Repetir proceso para Estado civil, Grupo étnico y CIUU
+
+datostaller <- datostaller%>%
+               mutate(`Estado civil`= case_when(`Estado civil` == 1 ~ 'Relación < 2 años',
+                                                `Estado civil` == 2 ~ 'Relación > 2 años',
+                                                `Estado civil` == 3 ~ 'Casada',
+                                                `Estado civil` == 4 ~ 'Separada o divorciada',
+                                                `Estado civil` == 5 ~ 'Viuda',
+                                                `Estado civil` == 6 ~ 'Soltera'),
+                      `Estado civil` = factor(`Estado civil`, levels = c('Relación < 2 años',
+                                                                         'Relación > 2 años', 'Casada', 
+                                                                         'Separada o divorciada', 'Viuda', 
+                                                                         'Soltera')))
+
+summary(datostaller$`Estado civil`)
+
 
 #La educación también es factor, pero tiene un orden (de menor a mayor)
 
