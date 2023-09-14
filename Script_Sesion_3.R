@@ -290,4 +290,46 @@ summary(datostaller$`Estado civil`)
 
 #La educación también es factor, pero tiene un orden (de menor a mayor)
 
+datostaller <- datostaller%>%
+               mutate(`Grupo etnico`= 
+                        case_when(`Grupo etnico` == 1 ~ 'Indigena',
+                                  `Grupo etnico` == 2 ~ 'Gitano (rom)',
+                                  `Grupo etnico` == 3 ~ 'Raizal',
+                                  `Grupo etnico` == 4 ~ 'Palenquero',
+                                  `Grupo etnico` == 5 ~ 'Afrodescendiente',
+                                  `Grupo etnico` == 6 ~ 'Ninguno'),
+         `Grupo etnico` = factor(`Grupo etnico`, levels = c('Indigena',
+                                                            'Gitano (rom)', 'Raizal', 
+                                                            'Palenquero', 'Afrodescendiente', 
+                                                            'Ninguno')))
 
+summary(datostaller$`Grupo etnico`)
+
+#Trabajar con la columna CIUU parece ser un error, por ahora la borraremos
+
+datostaller <- datostaller[, -which(names(datostaller) == "CIUU 4rev")]
+
+#La educación también es factor, pero tiene un orden (de menor a mayor)
+#Hay una forma extensa de tratar de imputar los años de educación y que
+#puede resultar bastante confusa, por lo que trabajaremos con el nivel
+#educativo más alto alcanzado
+
+datostaller <- datostaller%>%
+               mutate(`Educacion`= case_when(`Educacion` == 1 ~ 'Ninguno',
+                                             `Educacion` == 2 ~ 'Media académica',
+                                             `Educacion` == 3 ~ 'Media técnica',
+                                             `Educacion` == 4 ~ 'Normalista',
+                                             `Educacion` == 5 ~ 'Técnica profesional',
+                                             `Educacion` == 6 ~ 'Tecnológica',
+                                             `Educacion` == 7 ~ 'Universitaria',
+                                             `Educacion` == 8 ~ 'Especialización',
+                                             `Educacion` == 9 ~ 'Maestría',
+                                             `Educacion` == 10 ~ 'Doctorado',
+                                             `Educacion` == 99 ~ 'Ns NR',),
+               `Educacion` = factor(`Educacion`, levels = c('Ninguno', 'Media académica',
+                                                            'Media técnica', 'Normalista', 
+                                                            'Técnica profesional', 'Tecnológica', 
+                                                            'Universitaria', 'Especialización',
+                                                            'Maestría', 'Doctorado', 'NS NR')))
+
+summary(datostaller$Educacion)
