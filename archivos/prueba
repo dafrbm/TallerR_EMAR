@@ -1,0 +1,19 @@
+#Preparar paquetes para trabajar con los datos
+
+rm(list = ls())
+
+library(readr)
+library(tidyverse)
+library(gdata)
+library(stargazer)
+
+#Fijar directorio de trabajo
+
+setwd("C:/Users/Lenovo/Desktop/GEIH")
+
+#Cargar base de datos
+
+datos <- read.dta("wages.dta")
+save(datos, file = "wages.RData")
+
+#Último ejercicio de arreglo de los datos
